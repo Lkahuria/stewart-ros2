@@ -1,23 +1,38 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.16)
 project(stewart)
 
-SET(Eigen3_INCLUDE_DIRS "/usr/local/include/eigen3")
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
 
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  rospy
-  cmake_modules
-)
-
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(Eigen3 REQUIRED)
 
-catkin_package(DEPENDS Eigen3)
-
-include_directories(${catkin_INCLUDE_DIRS})
-include_directories(${Eigen3_INCLUDE_DIRS})
+add_executable(ik src/ik.cpp)
+target_link_libraries(ik PRIVATE
+  rclcpp::rclcpp
+  ${std_msgs_TARGETS}
+  ${geometry_msgs_TARGETS}
+  Eigen3::Eigen
+)
 
 add_executable(ps4_controller src/ps4_controller.cpp)
-target_link_libraries(ps4_controller ${catkin_LIBRARIES})
+target_link_libraries(ps4_controller PRIVATE
+  rclcpp::rclcpp
+  ${geometry_msgs_TARGETS}
+  ${sensor_msgs_TARGETS}
+)
 
-add_executable(ik src/ik.cpp)
-target_link_libraries(ik ${catkin_LIBRARIES})
+install(TARGETS ik ps4_controller
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(DIRECTORY launch sdf world
+  DESTINATION share/${PROJECT_NAME}
+)
+
+ament_package()

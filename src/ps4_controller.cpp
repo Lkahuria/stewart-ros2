@@ -1,56 +1,52 @@
 #include <cmath>
+#include <memory>
 
-#include "geometry_msgs/Twist.h"
-#include "ros/ros.h"
-#include "sensor_msgs/Joy.h"
+#include "geometry_msgs/msg/twist.hpp"
+#include "rclcpp/rclcpp.hpp"
+#include "sensor_msgs/msg/joy.hpp"
 
-class Controller
+class Controller : public rclcpp::Node
 {
 public:
-    Controller(int argc, char **argv)
-    {
-        ros::init(argc, argv, "ps4_controller");
-        ros::NodeHandle nh;
-        pub = nh.advertise<geometry_msgs::Twist>("/stewart/platform_twist", 100);
-        sub = nh.subscribe("/joy", 100, &Controller::callback, this);
-    }
+  Controller() : Node("ps4_controller")
+  {
+    pub_ = this->create_publisher<geometry_msgs::msg::Twist>("/stewart/platform_twist", 10);
+    sub_ = this->create_subscription<sensor_msgs::msg::Joy>(
+      "/joy", 10, std::bind(&Controller::callback, this, std::placeholders::_1));
+  }
 
-    void run()
-    {
-        ros::spin();
-    }
+private:
+  void callback(const sensor_msgs::msg::Joy::SharedPtr msg)
+  {
+    if (msg->axes.size() < 5 || msg->buttons.size() < 8) return;
 
-private: 
-    void callback(const sensor_msgs::Joy::ConstPtr& msg)
-    {
-        twist_msg.linear.x = -msg->axes[0]/2.0;
-        twist_msg.linear.y = msg->axes[1]/2.0;
-        twist_msg.angular.x = -msg->axes[4]/5.0;
-        twist_msg.angular.y = -msg->axes[3]/5.0;
+    twist_msg_.linear.x = -msg->axes.at(0) / 2.0;
+    twist_msg_.linear.y = msg->axes.at(1) / 2.0;
+    twist_msg_.angular.x = -msg->axes.at(4) / 5.0;
+    twist_msg_.angular.y = -msg->axes.at(3) / 5.0;
 
-        if (msg->buttons[7] && twist_msg.linear.z < 1)
-            twist_msg.linear.z += 0.01;
-        else if (msg->buttons[6] && twist_msg.linear.z > 0)
-            twist_msg.linear.z -= 0.01;
+    if (msg->buttons.at(7) && twist_msg_.linear.z < 1.0)
+      twist_msg_.linear.z += 0.01;
+    else if (msg->buttons.at(6) && twist_msg_.linear.z > 0.0)
+      twist_msg_.linear.z -= 0.01;
 
-        if (msg->buttons[5] && twist_msg.angular.z < M_PI/2.0)
-            twist_msg.angular.z += 0.01;
-        else if (msg->buttons[4] && twist_msg.angular.z > -M_PI/2.0)
-            twist_msg.angular.z -= 0.01;
+    if (msg->buttons.at(5) && twist_msg_.angular.z < M_PI / 2.0)
+      twist_msg_.angular.z += 0.01;
+    else if (msg->buttons.at(4) && twist_msg_.angular.z > -M_PI / 2.0)
+      twist_msg_.angular.z -= 0.01;
 
-        pub.publish(twist_msg);
-    }
+    pub_->publish(twist_msg_);
+  }
 
-    geometry_msgs::Twist twist_msg;
-
-    ros::Publisher pub;
-    ros::Subscriber sub;
+  geometry_msgs::msg::Twist twist_msg_;
+  rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr pub_;
+  rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr sub_;
 };
 
-int main(int argc, char **argv)
+int main(int argc, char ** argv)
 {
-    Controller controller(argc, argv);
-    controller.run();
-
-    return 0;
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared<Controller>());
+  rclcpp::shutdown();
+  return 0;
 }
