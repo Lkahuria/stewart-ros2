@@ -1,62 +1,37 @@
-# Stewart Platform Simulation (ROS 2 Lyrical Luth)
+# Stewart Platform (ROS 2 Lyrical Luth)
 
-A 6-DOF Stewart platform simulation running on **ROS 2 Lyrical Luth** and **Gazebo Jetty (`gz-sim`)**. This repository ports the original ROS 1 implementation to `ament_cmake`, `rclcpp`, and Gazebo Jetty's native joint position controllers and `ros_gz_bridge`.
+Simulating a 6-DOF Stewart platform in Gazebo Jetty (`gz-sim`) using native joint position controllers and `ros_gz_bridge` to control a closed-loop manipulator with ROS 2.
 
-## Prerequisites
+![Stewart Platform Simulation](gif/stewart.gif)
 
-Make sure ROS 2 Lyrical Luth is installed along with the Gazebo ROS bridge and Eigen3:
+Because the Stewart platform is a closed-loop manipulator, the model description is written in SDF rather than URDF. Instead of a custom ROS 1 Gazebo Classic plugin, this ROS 2 port uses Gazebo Jetty's `JointPositionController` system plugins and `ros_gz_bridge` to expose the 6 prismatic leg commands to ROS 2.
 
-```bash
-sudo apt update
-sudo apt install ros-lyrical-ros-gz libeigen3-dev -y
-```
+### Prerequisites
 
-## Build Instructions
+Install `ros_gz` and `Eigen3` for ROS 2 Lyrical Luth:
+* `sudo apt install ros-lyrical-ros-gz libeigen3-dev`
 
-1. Create a ROS 2 workspace (if you don't already have one) and clone this repository into `src/`:
-   ```bash
-   mkdir -p ~/stewart_ws/src
-   cd ~/stewart_ws/src
-   git clone https://github.com stewart
-   ```
+### Clone and Build
 
-2. Build the package with `colcon`:
-   ```bash
-   cd ~/stewart_ws
-   colcon build --packages-select stewart
-   source install/setup.bash
-   ```
+Clone this repository into your ROS 2 workspace `src` directory and build it with `colcon`:
+* `cd ~/your_ros2_ws/src`
+* `git clone https://github.com/Lkahuria/stewart-ros2.git`
+* `cd ~/your_ros2_ws`
+* `colcon build --packages-select stewart`
+* `source install/setup.bash`
 
-> **Note:** `sdf/stewart/model.sdf` is already configured with Gazebo Jetty's closed-loop joints and `JointPositionController` plugins. Do **not** regenerate it from `model.sdf.erb`.
+*(Note: `sdf/stewart/model.sdf` is already generated and configured for Gazebo Jetty, so you do not need to run `erb` or build the legacy `plugin/` folder).*
 
-## Running the Simulation
+### Launch and Control
 
-Launch Gazebo Jetty, the ROS-Gazebo topic bridge, and the inverse kinematics (`ik`) node:
+To launch Gazebo, the topic bridge, and the inverse kinematics (`ik`) node:
+* `ros2 launch stewart stewart.launch.py`
 
-```bash
-source ~/stewart_ws/install/setup.bash
-ros2 launch stewart stewart.launch.py
-```
+To move the platform by publishing a target `Twist` pose (in a second sourced terminal):
+* `ros2 topic pub -r 10 /stewart/platform_twist geometry_msgs/msg/Twist "{linear: {x: 0.0, y: 0.0, z: 0.35}, angular: {x: 0.15, y: -0.15, z: 0.2}}"`
 
-## Controlling the Platform
+**Note:** If using a DualShock 3 or 4 controller via USB (`joy_node` + `ps4_controller`), the left analog stick translates in `x` and `y`, `R2` increases `z` and `L2` decreases `z`, the right analog stick rotates around `x` and `y` (roll and pitch), and `R1`/`L1` adjust yaw.
 
-The `ik` node subscribes to `/stewart/platform_twist` (`geometry_msgs/msg/Twist`) and computes the 6 prismatic leg extensions:
-* **`linear.x, linear.y, linear.z`**: Surge, sway, and heave translation (in meters)
-* **`angular.x, angular.y, angular.z`**: Roll, pitch, and yaw rotation (in radians)
+### Credits
 
-Open a second terminal, source the workspace, and publish a target pose:
-
-* **Lift and tilt the platform:**
-  ```bash
-  source ~/stewart_ws/install/setup.bash
-  ros2 topic pub -r 10 /stewart/platform_twist geometry_msgs/msg/Twist "{linear: {x: 0.0, y: 0.0, z: 0.35}, angular: {x: 0.15, y: -0.15, z: 0.2}}"
-  ```
-
-* **Return to level home position:**
-  ```bash
-  ros2 topic pub -r 10 /stewart/platform_twist geometry_msgs/msg/Twist "{linear: {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}"
-  ```
-
-## Credits
-
-Ported to ROS 2 Lyrical Luth and Gazebo Jetty from the original ROS 1 repository by [Daniel S. Ingram](https://github.com).
+Ported to ROS 2 Lyrical Luth from the original ROS 1 repository by [daniel-s-ingram/stewart](https://github.com).
