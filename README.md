@@ -5,7 +5,7 @@ A 6-DOF Stewart platform simulation running on **ROS 2 Lyrical Luth** and **Gaze
 
 * **Works out of the box:** **Jazzy**, **Kilted**, **Lyrical**, and **Rolling** (tested on ROS 2 Lyrical Luth with Gazebo Jetty).
 
-* **ROS 2 Humble:** Humble defaults to Gazebo Fortress (`ignition-gazebo-*`), which uses different plugin names than `model.sdf`. Humble users must install **Gazebo Harmonic** (`ros-humble-ros-gzharmonic`) instead of the default `ros-humble-ros-gz` package.
+* **ROS 2 Humble:** Humble defaults to Gazebo Fortress (formerly ‘Ignition Fortress’), which uses different plugin names than `model.sdf`. Humble users must install **Gazebo Harmonic** (`ros-humble-ros-gzharmonic`) instead of the default `ros-humble-ros-gz` package.
 
 ### Prerequisites
 
