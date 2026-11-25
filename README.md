@@ -18,7 +18,7 @@ A 6-DOF Stewart platform simulation running on **ROS 2 Lyrical Luth** and **Gaze
   ```bash
   sudo apt install ros-humble-ros-gzharmonic libeigen3-dev
   ```
-  *(Note: `ros-humble-ros-gzharmonic` conflicts with `ros-humble-ros-gz`, so remove `ros-humble-ros-gz*` first if already installed).*
+  *(Note: `ros-humble-ros-gzharmonic` conflicts with `ros-humble-ros-gz`, so remove `ros-humble-ros-gz` first if already installed).*
 
 
 ## Build Instructions
