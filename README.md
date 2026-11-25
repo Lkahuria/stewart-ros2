@@ -1,15 +1,25 @@
 # Stewart Platform Simulation (ROS 2 Lyrical Luth)
 
 A 6-DOF Stewart platform simulation running on **ROS 2 Lyrical Luth** and **Gazebo Jetty (`gz-sim`)**. This repository ports the original ROS 1 implementation to `ament_cmake`, `rclcpp`, and Gazebo Jetty's native joint position controllers and `ros_gz_bridge`.
+### Supported ROS 2 Versions
 
-## Prerequisites
+* **Works out of the box:** **Jazzy**, **Kilted**, **Lyrical**, and **Rolling** (tested on ROS 2 Lyrical Luth with Gazebo Jetty).
 
-Make sure ROS 2 Lyrical Luth is installed along with the Gazebo ROS bridge and Eigen3:
+* **ROS 2 Humble:** Humble defaults to Gazebo Fortress (`ignition-gazebo-*`), which uses different plugin names than `model.sdf`. Humble users must install **Gazebo Harmonic** (`ros-humble-ros-gzharmonic`) instead of the default `ros-humble-ros-gz` package.
 
-```bash
-sudo apt update
-sudo apt install ros-lyrical-ros-gz libeigen3-dev -y
-```
+### Prerequisites
+
+* **For ROS 2 Jazzy, Kilted, Lyrical, or Rolling:**
+  ```bash
+  sudo apt install ros-\$ROS_DISTRO-ros-gz libeigen3-dev
+  ```
+
+* **For ROS 2 Humble** (using the [OSRF Gazebo repository](https://gazebosim.org/docs/latest/ros_installation/)):
+  ```bash
+  sudo apt install ros-humble-ros-gzharmonic libeigen3-dev
+  ```
+  *(Note: `ros-humble-ros-gzharmonic` conflicts with `ros-humble-ros-gz`, so remove `ros-humble-ros-gz*` first if already installed).*
+
 
 ## Build Instructions
 
