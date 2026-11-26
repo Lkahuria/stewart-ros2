@@ -35,4 +35,8 @@ install(DIRECTORY launch sdf world
   DESTINATION share/${PROJECT_NAME}
 )
 
+install(PROGRAMS scripts/wave_demo.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 ament_package()
