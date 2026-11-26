@@ -1,42 +1,17 @@
 cmake_minimum_required(VERSION 3.16)
 project(stewart)
 
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic)
-endif()
-
 find_package(ament_cmake REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(std_msgs REQUIRED)
-find_package(geometry_msgs REQUIRED)
-find_package(sensor_msgs REQUIRED)
-find_package(Eigen3 REQUIRED)
 
-add_executable(ik src/ik.cpp)
-target_link_libraries(ik PRIVATE
-  rclcpp::rclcpp
-  ${std_msgs_TARGETS}
-  ${geometry_msgs_TARGETS}
-  Eigen3::Eigen
-)
-
-add_executable(ps4_controller src/ps4_controller.cpp)
-target_link_libraries(ps4_controller PRIVATE
-  rclcpp::rclcpp
-  ${geometry_msgs_TARGETS}
-  ${sensor_msgs_TARGETS}
-)
-
-install(TARGETS ik ps4_controller
+install(PROGRAMS
+  scripts/ik.py
+  scripts/ps4_controller.py
+  scripts/wave_demo.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
 install(DIRECTORY launch sdf world
   DESTINATION share/${PROJECT_NAME}
-)
-
-install(PROGRAMS scripts/wave_demo.py
-  DESTINATION lib/${PROJECT_NAME}
 )
 
 ament_package()

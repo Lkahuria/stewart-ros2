@@ -39,7 +39,7 @@ def generate_launch_description():
 
     ik_node = Node(
         package='stewart',
-        executable='ik',
+        executable='ik.py',
         output='screen',
     )
 

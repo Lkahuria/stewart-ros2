@@ -3,18 +3,17 @@
 <package format="3">
   <name>stewart</name>
   <version>1.0.0</version>
-  <description>Stewart platform simulation for ROS 2 Lyrical Luth and Gazebo Jetty</description>
+  <description>Stewart platform simulation in Python for ROS 2 and Gazebo</description>
   <maintainer email="user@example.com">user</maintainer>
   <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <depend>rclcpp</depend>
-  <depend>std_msgs</depend>
-  <depend>geometry_msgs</depend>
-  <depend>sensor_msgs</depend>
-  <depend>eigen</depend>
-
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>ros_gz_sim</exec_depend>
   <exec_depend>ros_gz_bridge</exec_depend>
 
