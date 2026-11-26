@@ -17,7 +17,7 @@ class StewartWaveDemo(Node):
         now = self.get_clock().now()
         t = (now - self.start_time).nanoseconds * 1e-9
 
-        freq = 0.25 #in Hz: 0.25 = 1 cycle every 4 sec, 0.5 = 1 cycle every 2 sec)
+        freq = 0.25 #(Hz) Change this to change the frequency :0.25 = 1 cycle every 4 sec, 0.5 = 1 cycle every 2 sec etc)
         w = 2.0 * math.pi * freq
 
         msg = Twist()
